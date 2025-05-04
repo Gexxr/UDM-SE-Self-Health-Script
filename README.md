@@ -37,11 +37,15 @@ It is designed for high-availability, production environments where minimizing d
 ## 🛠 Installation Overview
 
 1. SSH into your UDM-SE as `root`
-2. Create a new boot script (10_internet_monitor.sh):
+2. Create on_boot.d directory:
     ```
-    vi /data/on_boot.d/10_internet_monitor.sh
+    mkdir -p /mnt/data/on_boot.d
     ```
-3. Once in VI, Paste the following: 
+3. Create a new boot script (10_internet_monitor.sh):
+    ```
+    vi /mnt/data/on_boot.d/10_internet_monitor.sh
+    ```
+4. Once in VI, Paste the following: 
     ```
     #!/bin/sh
     # Auto-setup cron job for internet monitor after reboot
@@ -55,13 +59,13 @@ It is designed for high-availability, production environments where minimizing d
     Remember: ESC, :wq, Enter
     ```
 
-4. Create the core script (internet_monitor.sh):
+5. Create the core script (internet_monitor.sh):
 
     ```
     vi /data/internet_monitor.sh
     ```
 
-5. Copy the following into the .sh:
+6. Copy the following into the .sh:
 
     ```
     #!/bin/sh
@@ -193,13 +197,13 @@ It is designed for high-availability, production environments where minimizing d
     ```
     Remember: ESC, :wq, Enter
     ```
-6. Make the scripts executable:
+7. Make the scripts executable:
 
     ```
     chmod +x /data/internet_monitor.sh
-    chmod +x /data/on_boot.d/10_internet_monitor.sh
+    chmod +x /mnt/data/on_boot.d/10_internet_monitor.sh
     ```
-7. Edit your crontab (`crontab -e`) and add:
+8. Edit your crontab (`crontab -e`) and add:
 
     ```
     * * * * * /data/internet_monitor.sh
