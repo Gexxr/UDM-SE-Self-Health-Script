@@ -48,7 +48,6 @@ It is designed for high-availability, production environments where minimizing d
 4. Once in VI, Paste the following: 
     ```
     #!/bin/sh
-    # Auto-setup cron job for internet monitor after reboot
     /bin/sleep 60
     if ! crontab -l 2>/dev/null | grep -q "/data/internet_monitor.sh"; then
     (crontab -l 2>/dev/null; echo "*/5 * * * * /data/internet_monitor.sh") | crontab -
@@ -69,7 +68,6 @@ It is designed for high-availability, production environments where minimizing d
 
     ```
     #!/bin/sh
-    # Internet Self-Healing Monitor for Dream Machine SE
     CHECK_INTERNAL="10.0.0.1"  
     CHECK_HOSTS="8.8.8.8 1.1.1.1"  
     PING_COUNT=2
@@ -272,11 +270,6 @@ It is designed for high-availability, production environments where minimizing d
 **Production ready**.  
 Successfully tested under real-world production network loads.
 
----
 
-## 📜 License
-
-MIT License.  
-Free to use, modify, and improve.
 
 ---
