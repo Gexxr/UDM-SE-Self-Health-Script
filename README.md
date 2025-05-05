@@ -29,6 +29,41 @@ This project is owned by Atlas 8 Technology. All scripts, documentation, and rel
 
 ---
 
+## 📋 Requirements
+
+- UniFi Dream Machine SE (UDM-SE)
+- Root SSH access
+- Basic familiarity with shell scripts and cron
+- `/data/` partition available for persistent storage
+
+---
+
+## 📈 Monitoring
+
+- Logs are saved in `/var/log/internet_monitor.log`
+- Live monitoring:
+
+    ```
+    tail -f /var/log/internet_monitor.log
+    ```
+
+- System logs also available:
+
+    ```
+    logread -f
+    ```
+
+---
+
+## 🧠 Notes
+
+- If WAN interface name is not `eth8`, adjust it in the `internet_monitor.sh`.
+- Default internal gateway monitored is `10.0.0.1`, and external IPs `8.8.8.8` and `1.1.1.1`.
+- Daily log clearing keeps `/var/log/internet_monitor.log` clean.
+- Designed to be lightweight and not interfere with normal UDM operations.
+
+---
+
 ## 📁 Included Files
 
 | File | Purpose |
@@ -247,40 +282,7 @@ This project is owned by Atlas 8 Technology. All scripts, documentation, and rel
     ```
     Disconnect your WAN port just before testing. you will see the results as they come in
     ```
----
 
-## 📋 Requirements
-
-- UniFi Dream Machine SE (UDM-SE)
-- Root SSH access
-- Basic familiarity with shell scripts and cron
-- `/data/` partition available for persistent storage
-
----
-
-## 📈 Monitoring
-
-- Logs are saved in `/var/log/internet_monitor.log`
-- Live monitoring:
-
-    ```
-    tail -f /var/log/internet_monitor.log
-    ```
-
-- System logs also available:
-
-    ```
-    logread -f
-    ```
-
----
-
-## 🧠 Notes
-
-- If WAN interface name is not `eth8`, adjust it in the `internet_monitor.sh`.
-- Default internal gateway monitored is `10.0.0.1`, and external IPs `8.8.8.8` and `1.1.1.1`.
-- Daily log clearing keeps `/var/log/internet_monitor.log` clean.
-- Designed to be lightweight and not interfere with normal UDM operations.
 
 ---
 
