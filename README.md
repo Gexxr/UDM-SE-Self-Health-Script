@@ -33,7 +33,7 @@ This project is owned by Atlas 8 Technology. All scripts, documentation, and rel
 
 - UniFi Dream Machine SE (UDM-SE)
 - Root SSH access
-- Basic familiarity with shell scripts and cron
+- Basic familiarity with shell scripts, vi and cron
 - `/data/` partition available for persistent storage
 
 ---
@@ -275,14 +275,10 @@ This project is owned by Atlas 8 Technology. All scripts, documentation, and rel
     fi
     ```
 7.  (Optional) Test the script:
-
+Disconnect your WAN port just before testing. you will see the results as they come in
     ```
     /data/internet_monitor.sh
     ```
-    ```
-    Disconnect your WAN port just before testing. you will see the results as they come in
-    ```
-
 
 ---
 
@@ -290,7 +286,6 @@ This project is owned by Atlas 8 Technology. All scripts, documentation, and rel
 
 **Production ready**.  
 Successfully tested under real-world production network loads.
-
 
 
 ---
