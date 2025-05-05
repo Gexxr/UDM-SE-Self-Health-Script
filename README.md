@@ -168,6 +168,7 @@ It is designed for high-availability, production environments where minimizing d
     check_internet
     if [ $? -ne 0 ]; then
         log "Internet still down after all recovery attempts. Immediate reboot triggered!"
+        echo "$($DATE): Internet failure triggered reboot after recovery attempts." >> /var/log/internet_failures.log
         CURRENT_TIME=$($DATE +%s)
         echo $CURRENT_TIME > $TIMESTAMP_FILE
         reset_fail_counter
@@ -182,6 +183,7 @@ It is designed for high-availability, production environments where minimizing d
     log "Internet still down. Fail counter at $FAILS/$MAX_FAILS."
     
     if [ "$FAILS" -ge "$MAX_FAILS" ]; then
+        echo "$($DATE): Internet failure triggered reboot after max fail counter reached." >> /var/log/internet_failures.log
         CURRENT_TIME=$($DATE +%s)
         echo $CURRENT_TIME > $TIMESTAMP_FILE
         log "Maximum fail counter reached. Restarting Dream Machine."
