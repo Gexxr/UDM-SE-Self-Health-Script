@@ -6,6 +6,7 @@
 A self-healing internet monitoring and auto-recovery system for the UniFi Dream Machine SE (UDM-SE).
 
 This project provides scripts to automatically detect internet outages, attempt recovery actions, and reboot the device if needed.  
+
 It is designed for high-availability, production environments where minimizing downtime is critical.
 
 ---
