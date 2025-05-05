@@ -151,6 +151,7 @@ It is designed for high-availability, production environments where minimizing d
     check_internet
     if [ $? -eq 0 ]; then
         log "Internet restored after WAN bounce. No reboot needed."
+        echo "$($DATE): Internet restored after WAN bounce. No reboot needed." >> /var/log/internet_failures.log
         reset_fail_counter
         exit 0
     fi
@@ -161,6 +162,7 @@ It is designed for high-availability, production environments where minimizing d
     check_internet
     if [ $? -eq 0 ]; then
         log "Internet restored after DHCP renewal. No reboot needed."
+        echo "$($DATE): Internet restored after DHCP renewal. No reboot needed." >> /var/log/internet_failures.log
         reset_fail_counter
         exit 0
     fi
