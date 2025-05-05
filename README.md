@@ -77,23 +77,20 @@ It is designed for high-availability, production environments where minimizing d
     # This script is proprietary and confidential.
     # It is intended solely for use by Atlas 8 Technology and its authorized representatives.
     # Unauthorized copying, distribution, modification, or use of this script is strictly prohibited.
-    CHECK_INTERNAL="10.0.0.1"       
-    CHECK_HOSTS="8.8.8.8 1.1.1.1"     
+    CHECK_INTERNAL="10.0.0.1"  
+    CHECK_HOSTS="8.8.8.8 1.1.1.1"  
     PING_COUNT=2
-    PING_TIMEOUT=2
-    WAN_INTERFACE="eth8"
-    CONFIRMATION_WAIT=30             
+    PING_TIMEOUT=2 
+    WAN_INTERFACE="eth8" #CHANGE THIS AS NEEDED
+    CONFIRMATION_WAIT=30 #ADJUST HOW LONG IT WAITS TO CONFIRM THE INTERNET IS ACTUALLY DOWN (IN SECONDS)
     WAN_BOUNCE_DOWN_TIME=5
     POST_BOUNCE_WAIT=15
     POST_DHCP_WAIT=15
-    COOLDOWN_PERIOD=600               
-    MAX_FAILS=3 
+    COOLDOWN_PERIOD=600  #AFTER REBOOT IF THE NETWORK IS STILL DOWN IT WILL WAIT 10 MINUTES TO RUN ANOTHER CHECK
+    MAX_FAILS=3  
     LOG_FILE="/var/log/internet_monitor.log"
-    FAILURE_LOG="/var/log/internet_failures.log"
     TIMESTAMP_FILE="/tmp/last_reboot.timestamp"
     FAIL_COUNTER_FILE="/tmp/internet_fail_counter"
-    DOWN_START_FILE="/tmp/internet_down_start.timestamp"
-    FAILURE_STAGE_FILE="/tmp/internet_failure_stage.txt"
     PING="/bin/ping"
     IP="/sbin/ip"
     SLEEP="/bin/sleep"
@@ -102,27 +99,27 @@ It is designed for high-availability, production environments where minimizing d
     REBOOT="/sbin/reboot"
     KILLALL="/usr/bin/killall"
     LOGGER="/usr/bin/logger"
-    
     log() {
         MESSAGE="$($DATE): $1"
         echo "$MESSAGE" | tee -a $LOG_FILE
         $LOGGER -t InternetMonitor "$MESSAGE"
     }
-    
-    record_down_start() {
-        if [ ! -f $DOWN_START_FILE ]; then
-            $DATE +%s > $DOWN_START_FILE
-        fi
+    check_internal() {
+        $PING -c $PING_COUNT -W $PING_TIMEOUT $CHECK_INTERNAL > /dev/null 2>&1
+        return $?
     }
-    
-    record_failure_stage() {
-        echo "$1" > $FAILURE_STAGE_FILE
+    check_internet() {
+        for host in $CHECK_HOSTS; do
+            $PING -c $PING_COUNT -W $PING_TIMEOUT $host > /dev/null 2>&1
+            if [ $? -eq 0 ]; then
+                return 0 
+            fi
+        done
+        return 1 
     }
-    
     reset_fail_counter() {
         echo 0 > $FAIL_COUNTER_FILE
     }
-    
     increment_fail_counter() {
         if [ ! -f $FAIL_COUNTER_FILE ]; then
             echo 1 > $FAIL_COUNTER_FILE
@@ -132,143 +129,81 @@ It is designed for high-availability, production environments where minimizing d
             echo $COUNT > $FAIL_COUNTER_FILE
         fi
     }
-    
-    log_permanent_failure() {
-        CURRENT_TIME=$($DATE +%s)
-    
-        if [ -f $DOWN_START_FILE ]; then
-            DOWN_START=$(cat $DOWN_START_FILE)
-            DURATION=$((CURRENT_TIME - DOWN_START))
-            DURATION_MINUTES=$((DURATION / 60))
-        else
-            DURATION="Unknown"
-            DURATION_MINUTES="Unknown"
-        fi
-    
-        if [ -f $FAILURE_STAGE_FILE ]; then
-            FAILURE_STAGE=$(cat $FAILURE_STAGE_FILE)
-        else
-            FAILURE_STAGE="Unknown"
-        fi
-    
-        echo "$($DATE): Internet failure triggered reboot. Downtime duration: ${DURATION_MINUTES} minutes (${DURATION} seconds). Failure stage: ${FAILURE_STAGE}." >> $FAILURE_LOG
-    
-        $RM -f $DOWN_START_FILE
-        $RM -f $FAILURE_STAGE_FILE
-    }
-    
-    check_internal() {
-        $PING -c $PING_COUNT -W $PING_TIMEOUT $CHECK_INTERNAL > /dev/null 2>&1
-        return $?
-    }
-    
-    check_internet() {
-        for host in $CHECK_HOSTS; do
-            $PING -c $PING_COUNT -W $PING_TIMEOUT $host > /dev/null 2>&1
-            if [ $? -eq 0 ]; then
-                return 0
-            fi
-        done
-        return 1
-    }
-    
     log "Starting Internet connectivity check..."
-    
     check_internal
     if [ $? -ne 0 ]; then
         log "Cannot reach internal gateway ($CHECK_INTERNAL)! Potential local network issue."
     else
         log "Internal gateway reachable."
     fi
-    
     check_internet
     if [ $? -eq 0 ]; then
         log "External internet connection OK."
         reset_fail_counter
         [ -f $TIMESTAMP_FILE ] && $RM -f $TIMESTAMP_FILE
-        [ -f $DOWN_START_FILE ] && $RM -f $DOWN_START_FILE
-        [ -f $FAILURE_STAGE_FILE ] && $RM -f $FAILURE_STAGE_FILE
         exit 0
     fi
-    
     log "External internet appears down, waiting $CONFIRMATION_WAIT seconds to confirm..."
     $SLEEP $CONFIRMATION_WAIT
-    
     check_internet
     if [ $? -eq 0 ]; then
         log "Internet restored after short outage. No reboot needed."
         reset_fail_counter
-        [ -f $DOWN_START_FILE ] && $RM -f $DOWN_START_FILE
-        [ -f $FAILURE_STAGE_FILE ] && $RM -f $FAILURE_STAGE_FILE
         exit 0
     fi
-    
-    record_down_start
-    
     log "Internet still down. Attempting WAN interface bounce ($WAN_INTERFACE)..."
     $IP link set $WAN_INTERFACE down
     $SLEEP $WAN_BOUNCE_DOWN_TIME
     $IP link set $WAN_INTERFACE up
     $SLEEP $POST_BOUNCE_WAIT
-    
     log "Checking internet connectivity after WAN bounce..."
     check_internet
     if [ $? -eq 0 ]; then
         log "Internet restored after WAN bounce. No reboot needed."
+        echo "$($DATE): Internet restored after WAN bounce. No reboot needed." >> /var/log/internet_failures.log
         reset_fail_counter
-        [ -f $DOWN_START_FILE ] && $RM -f $DOWN_START_FILE
-        [ -f $FAILURE_STAGE_FILE ] && $RM -f $FAILURE_STAGE_FILE
         exit 0
     fi
-    
-    record_failure_stage "WAN Bounce Failed"
-    
     log "Internet still down after WAN bounce. Attempting DHCP client renewal..."
     $KILLALL -HUP udhcpc
     $SLEEP $POST_DHCP_WAIT
-    
     log "Checking internet connectivity after DHCP renewal..."
     check_internet
     if [ $? -eq 0 ]; then
         log "Internet restored after DHCP renewal. No reboot needed."
+        echo "$($DATE): Internet restored after DHCP renewal. No reboot needed." >> /var/log/internet_failures.log
         reset_fail_counter
-        [ -f $DOWN_START_FILE ] && $RM -f $DOWN_START_FILE
-        [ -f $FAILURE_STAGE_FILE ] && $RM -f $FAILURE_STAGE_FILE
         exit 0
     fi
-    
-    record_failure_stage "DHCP Renew Failed"
-    
-    log "Final check: Internet still down after all recovery attempts."
-    
-    CURRENT_TIME=$($DATE +%s)
-    
-    if [ -f $TIMESTAMP_FILE ]; then
-        LAST_REBOOT=$(cat $TIMESTAMP_FILE)
-        TIME_SINCE_LAST_REBOOT=$((CURRENT_TIME - LAST_REBOOT))
-    
-        if [ $TIME_SINCE_LAST_REBOOT -lt $COOLDOWN_PERIOD ]; then
-            log "Cooldown active ($((COOLDOWN_PERIOD - TIME_SINCE_LAST_REBOOT)) seconds left). No reboot triggered."
-            increment_fail_counter
-            exit 0
-        fi
-    fi
-    
-    increment_fail_counter
-    FAILS=$(cat $FAIL_COUNTER_FILE)
-    
-    if [ "$FAILS" -ge "$MAX_FAILS" ]; then
-        log "Maximum fail counter reached. Restarting Dream Machine."
+    log "Final check: Verifying internet status before deciding to reboot..."
+    check_internet
+    if [ $? -ne 0 ]; then
+        log "Internet still down after all recovery attempts. Immediate reboot triggered!"
+        echo "$($DATE): Internet failure triggered reboot after recovery attempts." >> /var/log/internet_failures.log
+        CURRENT_TIME=$($DATE +%s)
         echo $CURRENT_TIME > $TIMESTAMP_FILE
-        log_permanent_failure
         reset_fail_counter
         $REBOOT
     else
-        log "Not yet at maximum fail threshold. No reboot triggered."
+        log "Internet restored after recovery attempts. No reboot needed."
+        reset_fail_counter
+        exit 0
     fi
+    increment_fail_counter
+    FAILS=$(cat $FAIL_COUNTER_FILE)
+    log "Internet still down. Fail counter at $FAILS/$MAX_FAILS."
     
-    exit 0
-
+    if [ "$FAILS" -ge "$MAX_FAILS" ]; then
+        echo "$($DATE): Internet failure triggered reboot after max fail counter reached." >> /var/log/internet_failures.log
+        CURRENT_TIME=$($DATE +%s)
+        echo $CURRENT_TIME > $TIMESTAMP_FILE
+        log "Maximum fail counter reached. Restarting Dream Machine."
+        reset_fail_counter
+        $REBOOT
+    else
+        log "Not yet at maximum fail threshold. No reboot."
+        exit 0
+    fi
     ```
     ```
     Remember: ESC, :wq, Enter
