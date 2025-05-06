@@ -24,13 +24,19 @@ It is designed for high-availability, production environments where minimizing d
 
 ---
 
-## 📜 Notice
+## 📜 Legal Notice
+
 This project is freeware, developed and maintained by Atlas 8 Technology. While the scripts, documentation, and related materials are freely available, please consider supporting the project with a donation.
+
 - **Support and Donations:**
   - For support with features or issues, reach out to: [support@atlas8tech.com](mailto:support@atlas8tech.com)
   - Donations are appreciated to help fund the development and maintenance of the project:
     - Cash App: `$SilverSurfer710`
     - Venmo: `@Silver_surfer_710`
+
+**DISCLAIMER:**
+Atlas 8 Technology is not responsible for any damages, data loss, or disruptions caused by the use of this script. The script is provided "as-is," without warranties of any kind, either express or implied. By using this script, you acknowledge and agree that you do so at your own risk.
+
 
 ---
 
@@ -117,12 +123,24 @@ This project is freeware, developed and maintained by Atlas 8 Technology. While 
     # UDM-SE Internet Self-Healing Monitor
     # Version: 2025.05.05
     # Company: Atlas 8 Technology
-    # License: Proprietary - Internal Use Only
+    # License: Freeware - Donations appreciated
     # Copyright (C) 2025 Atlas 8 Technology
     #
-    # This script is proprietary and confidential.
-    # It is intended solely for use by Atlas 8 Technology and its authorized representatives.
-    # Unauthorized copying, distribution, modification, or use of this script is strictly prohibited.
+    # This script is freely available for use and modification.
+    # Please consider supporting the project through donations.
+    #
+    # Donation Links:
+    # Cash App: $SilverSurfer710
+    # Venmo: @Silver_surfer_710
+    #
+    # For support or feature requests, contact: support@atlas8tech.com
+    #
+    # Usage of this script is governed by the terms provided by Atlas 8 Technology.
+    # Unauthorized redistribution or misuse is discouraged, though we encourage contributions to the project.
+    #
+    # DISCLAIMER:
+    # Atlas 8 Technology is not responsible for any damages, data loss, or disruptions caused by the use of this script.
+    # This script is provided "as-is," without warranties of any kind, either express or implied.
     CHECK_INTERNAL="10.0.0.1"  
     CHECK_HOSTS="8.8.8.8 1.1.1.1"  
     PING_COUNT=2
