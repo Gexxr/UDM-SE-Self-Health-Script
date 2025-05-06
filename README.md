@@ -141,7 +141,7 @@ Atlas 8 Technology is not responsible for any damages, data loss, or disruptions
     # DISCLAIMER:
     # Atlas 8 Technology is not responsible for any damages, data loss, or disruptions caused by the use of this script.
     # This script is provided "as-is," without warranties of any kind, either express or implied.
-    CHECK_INTERNAL="10.0.0.1"  
+    CHECK_INTERNAL="10.0.0.1"  #!!!!! IF THIS IS NOT YOUR GW, CHANGE IT !!!!!
     CHECK_HOSTS="8.8.8.8 1.1.1.1"  
     PING_COUNT=2
     PING_TIMEOUT=2 
