@@ -170,16 +170,12 @@ This project is owned by Atlas 8 Technology. All scripts, documentation, and rel
             echo $COUNT > $FAIL_COUNTER_FILE
         fi
     }
-    log "Starting Internet connectivity check..."
     check_internal
     if [ $? -ne 0 ]; then
         log "Cannot reach internal gateway ($CHECK_INTERNAL)! Potential local network issue."
-    else
-        log "Internal gateway reachable."
     fi
     check_internet
     if [ $? -eq 0 ]; then
-        log "External internet connection OK."
         reset_fail_counter
         [ -f $TIMESTAMP_FILE ] && $RM -f $TIMESTAMP_FILE
         exit 0
