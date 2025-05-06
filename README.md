@@ -25,7 +25,12 @@ It is designed for high-availability, production environments where minimizing d
 ---
 
 ## 📜 Legal Notice
-This project is owned by Atlas 8 Technology. All scripts, documentation, and related materials are proprietary and confidential. Unauthorized distribution, modification, or sharing of this project is strictly prohibited without explicit permission. Usage of this project is governed by the terms outlined in the Non-Disclosure Agreement (NDA) and License Agreement provided by Atlas 8 Technology. By utilizing or accessing this project, you agree to adhere to these terms.
+This project is freeware, developed and maintained by Atlas 8 Technology. While the scripts, documentation, and related materials are freely available, please consider supporting the project with a donation.
+- **Support and Donations:**
+  - For support with features or issues, reach out to: [support@atlas8tech.com](mailto:support@atlas8tech.com)
+  - Donations are appreciated to help fund the development and maintenance of the project:
+    - Cash App: `$SilverSurfer710`
+    - Venmo: `@Silver_surfer_710`
 
 ---
 
