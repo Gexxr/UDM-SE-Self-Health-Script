@@ -24,7 +24,7 @@ It is designed for high-availability, production environments where minimizing d
 
 ---
 
-## 📜 Legal Notice
+## 📜 Notice
 This project is freeware, developed and maintained by Atlas 8 Technology. While the scripts, documentation, and related materials are freely available, please consider supporting the project with a donation.
 - **Support and Donations:**
   - For support with features or issues, reach out to: [support@atlas8tech.com](mailto:support@atlas8tech.com)
